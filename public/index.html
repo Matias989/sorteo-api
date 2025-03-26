@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Sorteo Leka</title>
+  <link rel="icon" href="https://cdn.glitch.global/119cacc6-b9b8-49e7-98dc-328c4d912811/LEKAIMO-isotipo-cocodrillo.png?v=1742965881536" type="image/png" />
+  <style>
+    body {
+      background: #f2f4f8;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      padding: 30px 40px;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .logo-container {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .logo {
+      width: 80px;
+      height: auto;
+      border-radius: 50%;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    p.descripcion {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 25px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      background: #5c67f2;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #4a54e1;
+    }
+
+    #mensaje {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    .footer {
+      margin-top: 30px;
+      font-size: 12px;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="logo-container">
+      <img src="https://cdn.glitch.global/119cacc6-b9b8-49e7-98dc-328c4d912811/LEKAIMO-isotipo-cocodrillo.png?v=1742965881536" alt="Logo Lekaimo" class="logo">
+    </div>
+
+    <h1>Sorteo Leka 🎁</h1>
+    <p class="descripcion">
+      ¡Registrate para participar del próximo sorteo!<br>
+      Mientras más veces participes sin ganar, <strong>más chances</strong> acumulás.<br>
+      <span style="color: #e63946;">⚠️ Usá siempre el mismo nickname para que tu multiplicador se mantenga</span>
+    </p>
+
+    <input type="text" id="nickname" placeholder="Tu nickname..." />
+    <button onclick="registrarme()">Registrarme</button>
+
+    <p id="mensaje"></p>
+
+    <div class="footer">Powered by Raziel 💜</div>
+  </div>
+
+  <script>
+    async function registrarme() {
+      const nickname = document.getElementById("nickname").value.trim();
+      const mensaje = document.getElementById("mensaje");
+
+      if (!nickname) {
+        mensaje.textContent = "⚠️ Ingresá un nickname válido.";
+        mensaje.style.color = "#e63946";
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nickname })
+        });
+
+        if (res.ok) {
+          mensaje.textContent = `🎉 ¡${nickname}, estás registrado!`;
+          mensaje.style.color = "#2a9d8f";
+        } else {
+          mensaje.textContent = "❌ Error al registrarte. Intentá nuevamente.";
+          mensaje.style.color = "#e63946";
+        }
+      } catch (err) {
+        mensaje.textContent = "❌ Error de conexión con el servidor.";
+        mensaje.style.color = "#e63946";
+      }
+    }
+  </script>
+</body>
+</html>
