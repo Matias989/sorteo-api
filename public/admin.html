@@ -11,7 +11,7 @@
       padding: 30px;
     }
 
-    h1 {
+    h1, h2 {
       text-align: center;
       color: #333;
     }
@@ -46,32 +46,83 @@
       margin-top: 15px;
       font-weight: bold;
     }
+
+    #auth {
+      text-align: center;
+      margin-top: 100px;
+    }
+
+    #auth input {
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      width: 250px;
+    }
+
+    #auth button {
+      background: #5c67f2;
+      color: white;
+    }
+
+    #auth-msg {
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
-  <h1>Panel de Administrador 🎛️</h1>
-
-  <div style="text-align:center;">
-    <button id="drawBtn" onclick="ejecutarSorteo()">🎯 Ejecutar Sorteo</button>
-    <button id="resetBtn" onclick="resetearParticipantes()">🔁 Resetear Participantes</button>
+  <!-- 🔐 Autenticación simple -->
+  <div id="auth">
+    <h2>Acceso de administrador 🔐</h2>
+    <input type="password" id="password" placeholder="Ingresá la contraseña" />
+    <br>
+    <button onclick="validarAcceso()">Entrar</button>
+    <p id="auth-msg"></p>
   </div>
 
-  <p id="status"></p>
+  <!-- 🎛️ Panel oculto hasta validar -->
+  <div id="admin-panel" style="display: none;">
+    <h1>Panel de Administrador 🎛️</h1>
 
-  <h2>Participantes registrados</h2>
-  <table id="tabla">
-    <thead>
-      <tr>
-        <th>Nickname</th>
-        <th>Multiplicador</th>
-      </tr>
-    </thead>
-    <tbody id="tbody">
-      <!-- Participantes se insertarán acá -->
-    </tbody>
-  </table>
+    <div style="text-align:center;">
+      <button id="drawBtn" onclick="ejecutarSorteo()">🎯 Ejecutar Sorteo</button>
+      <button id="resetBtn" onclick="resetearParticipantes()">🔁 Resetear Participantes</button>
+    </div>
+
+    <p id="status"></p>
+
+    <h2>Participantes registrados</h2>
+    <table id="tabla">
+      <thead>
+        <tr>
+          <th>Nickname</th>
+          <th>Multiplicador</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <!-- Participantes se insertarán acá -->
+      </tbody>
+    </table>
+  </div>
 
   <script>
+    const CONTRASEÑA_ADMIN = "lekasecreta"; // Cambiala acá si querés otra clave
+
+    function validarAcceso() {
+      const input = document.getElementById("password").value.trim();
+      const msg = document.getElementById("auth-msg");
+
+      if (input === CONTRASEÑA_ADMIN) {
+        document.getElementById("auth").style.display = "none";
+        document.getElementById("admin-panel").style.display = "block";
+        cargarParticipantes(); // sólo si accedió
+      } else {
+        msg.textContent = "❌ Contraseña incorrecta.";
+        msg.style.color = "#e63946";
+      }
+    }
+
     async function cargarParticipantes() {
       const res = await fetch('/api/participants');
       const participantes = await res.json();
@@ -79,10 +130,7 @@
       tbody.innerHTML = "";
 
       participantes.forEach(p => {
-        const row = `<tr>
-          <td>${p.nickname}</td>
-          <td>${p.multiplier}</td>
-        </tr>`;
+        const row = `<tr><td>${p.nickname}</td><td>${p.multiplier}</td></tr>`;
         tbody.innerHTML += row;
       });
     }
@@ -93,12 +141,10 @@
       try {
         const res = await fetch("/api/draw", { method: "POST" });
         const data = await res.json();
-        if (res.ok) {
-          status.textContent = `🎉 Ganador: ${data.ganador}`;
-        } else {
-          status.textContent = `❌ Error: ${data.message}`;
-        }
-        await cargarParticipantes(); // Actualiza tabla
+        status.textContent = res.ok
+          ? `🎉 Ganador: ${data.ganador}`
+          : `❌ Error: ${data.message}`;
+        await cargarParticipantes();
       } catch (err) {
         status.textContent = "❌ Error al ejecutar sorteo.";
       }
@@ -111,14 +157,11 @@
         const res = await fetch("/api/reset-draw", { method: "POST" });
         const data = await res.json();
         status.textContent = data.message;
-        await cargarParticipantes(); // Actualiza tabla
+        await cargarParticipantes();
       } catch (err) {
         status.textContent = "❌ Error al resetear participantes.";
       }
     }
-
-    // Carga inicial
-    cargarParticipantes();
   </script>
 </body>
 </html>
