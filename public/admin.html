@@ -27,6 +27,7 @@
 
     #drawBtn { background: #2a9d8f; color: white; }
     #resetBtn { background: #e63946; color: white; }
+    #refreshBtn { background: #20B2AA; color: white; }
 
     table {
       width: 100%;
@@ -85,10 +86,11 @@
   <div id="admin-panel" style="display: none;">
     <h1>Panel de Administrador 🎛️</h1>
 
-    <div style="text-align:center;">
-      <button id="drawBtn" onclick="ejecutarSorteo()">🎯 Ejecutar Sorteo</button>
-      <button id="resetBtn" onclick="resetearParticipantes()">🔁 Resetear Participantes</button>
-    </div>
+  <div style="text-align:center;">
+    <button id="drawBtn" onclick="ejecutarSorteo()">🎯 Ejecutar Sorteo</button>
+    <button id="resetBtn" onclick="resetearParticipantes()">🔁 Resetear Participantes</button>
+    <button id="refreshBtn" onclick="cargarParticipantes()">🔄 Refrescar Lista</button>
+  </div>
 
     <p id="status"></p>
 

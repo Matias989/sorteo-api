@@ -139,3 +139,21 @@ app.get("/api/participants", async (req, res) => {
     res.status(500).send("Error al obtener participantes.");
   }
 });
+
+app.get('/api/register', async (req, res) => {
+  const nickname = req.query.nickname?.trim().toLowerCase();
+  if (!nickname) return res.status(400).send('Nickname requerido');
+
+  try {
+    let user = await User.findOne({ nickname });
+    if (!user) {
+      user = new User({ nickname, isRegisteredForCurrentDraw: true });
+    } else {
+      user.isRegisteredForCurrentDraw = true;
+    }
+    await user.save();
+    res.status(200).send(`🎉 ¡${nickname}, estás registrado!`);
+  } catch (error) {
+    res.status(500).send('Error al registrar usuario');
+  }
+});
