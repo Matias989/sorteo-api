@@ -10,7 +10,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json());
 
 mongoose
-mongoose.connect("mongodb+srv://raziel:155524400@sorteo.haag8qf.mongodb.net/sorteo?retryWrites=true&w=majority&appName=sorteo", {
+mongoose.connect("", {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
